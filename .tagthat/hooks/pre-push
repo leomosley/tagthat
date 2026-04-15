@@ -14,19 +14,24 @@ if [ -z "$SLUG" ]; then
   exit 0
 fi
 
-# Find audio file (.mp3 first, then .wav)
-AUDIO_FILE=""
-if [ -f "$TAGTHAT_DIR/$SLUG/$SLUG.mp3" ]; then
-  AUDIO_FILE="$TAGTHAT_DIR/$SLUG/$SLUG.mp3"
-elif [ -f "$TAGTHAT_DIR/$SLUG/$SLUG.wav" ]; then
-  AUDIO_FILE="$TAGTHAT_DIR/$SLUG/$SLUG.wav"
-fi
+SLUG_DIR="$TAGTHAT_DIR/$SLUG"
 
-if [ -z "$AUDIO_FILE" ]; then
+if [ ! -d "$SLUG_DIR" ]; then
   exit 0
 fi
 
-# Detect file extension
+# Collect all .mp3 and .wav files in the contributor's directory
+FILES=()
+while IFS= read -r -d '' f; do
+  FILES+=("$f")
+done < <(find "$SLUG_DIR" -maxdepth 1 \( -name "*.mp3" -o -name "*.wav" \) -print0 2>/dev/null)
+
+if [ "${#FILES[@]}" -eq 0 ]; then
+  exit 0
+fi
+
+# Pick one at random
+AUDIO_FILE="${FILES[$((RANDOM % ${#FILES[@]}))]}"
 EXT="${AUDIO_FILE##*.}"
 
 # Play in background — never block the push

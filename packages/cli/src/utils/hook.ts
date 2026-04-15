@@ -8,8 +8,9 @@ export function generateHookScript(): string {
   return hookScript;
 }
 
-// Appends to an existing .git/hooks/pre-push rather than overwriting it,
-// and skips if the marker is already present (idempotent).
+// Appends to an existing .git/hooks/pre-push rather than overwriting it.
+// If a tagthat block is already present, replaces it in-place so the hook
+// stays up to date when hook.sh changes.
 export async function writeAndInstallHook(gitRoot: string): Promise<void> {
   const hookContent = generateHookScript();
   const tagthatHooksDir = path.join(gitRoot, ".tagthat", "hooks");
@@ -29,14 +30,19 @@ export async function writeAndInstallHook(gitRoot: string): Promise<void> {
     // file does not exist yet
   }
 
-  if (existingContent.includes(HOOK_MARKER)) return;
+  let newContent: string;
 
-  if (existingContent.length > 0) {
+  if (existingContent.includes(HOOK_MARKER)) {
+    // Replace the existing tagthat block (everything from the marker onwards)
+    const before = existingContent.slice(0, existingContent.indexOf(HOOK_MARKER)).trimEnd();
+    newContent = before.length > 0 ? `${before}\n\n${hookContent}` : hookContent;
+  } else if (existingContent.length > 0) {
     const separator = existingContent.endsWith("\n") ? "\n" : "\n\n";
-    await fs.writeFile(gitHookPath, existingContent + separator + hookContent, { mode: 0o755 });
+    newContent = existingContent + separator + hookContent;
   } else {
-    await fs.writeFile(gitHookPath, hookContent, { mode: 0o755 });
+    newContent = hookContent;
   }
 
+  await fs.writeFile(gitHookPath, newContent, { mode: 0o755 });
   await fs.chmod(gitHookPath, 0o755);
 }
