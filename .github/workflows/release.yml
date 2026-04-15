@@ -59,12 +59,14 @@ jobs:
           jq ".version = \"${{ steps.next.outputs.version }}\"" packages/cli/package.json > tmp.json
           mv tmp.json packages/cli/package.json
 
+      - name: Authenticate with npm
+        if: steps.check.outputs.needed == 'true'
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> packages/cli/.npmrc
+
       - name: Publish to npm
         if: steps.check.outputs.needed == 'true'
         run: bun publish --access public
         working-directory: packages/cli
-        env:
-          BUN_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Generate changelog
         if: steps.check.outputs.needed == 'true'
