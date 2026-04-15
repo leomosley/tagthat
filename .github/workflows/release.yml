@@ -61,7 +61,8 @@ jobs:
       - name: Set version
         if: steps.check.outputs.needed == 'true'
         run: |
-          jq ".version = \"${{ steps.next.outputs.version }}\"" packages/cli/package.json > tmp.json
+          VERSION=$(echo "${{ steps.next.outputs.version }}" | sed 's/^v//')
+          jq ".version = \"$VERSION\"" packages/cli/package.json > tmp.json
           mv tmp.json packages/cli/package.json
 
       - name: Publish to npm
