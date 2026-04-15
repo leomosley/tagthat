@@ -66,8 +66,7 @@ export async function initCommand(): Promise<void> {
   }
 
   p.log.info(
-    `Drop any ${highlighter.info(".mp3")} or ${highlighter.info(".wav")} file into your contributor directory.\n` +
-      `Then commit ${highlighter.muted(".tagthat/")} and push — tagthat plays automatically.`
+    `Add any ${highlighter.info(".mp3")} or ${highlighter.info(".wav")} file into your contributor directory, commit it, and push — tagthat plays automatically.`
   );
 
   p.outro(highlighter.success(highlighter.bold("All set!")));

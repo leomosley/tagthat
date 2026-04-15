@@ -34,7 +34,7 @@ export async function addCommand(name: string): Promise<void> {
   if (existed) {
     p.log.warn(`${highlighter.bold(name)} already has a slot (slug: ${highlighter.info(slug)})`);
     p.note(
-      `Drop any ${highlighter.info(".mp3")} or ${highlighter.info(".wav")} file into:\n${highlighter.muted(path.relative(gitRoot, dir))}`,
+      `Add any ${highlighter.info(".mp3")} or ${highlighter.info(".wav")} file into:\n${highlighter.muted(path.relative(gitRoot, dir))}`,
       "Add your audio"
     );
     p.outro(highlighter.muted("No changes made."));
@@ -43,7 +43,7 @@ export async function addCommand(name: string): Promise<void> {
 
   p.log.success(`Created ${highlighter.success(path.relative(gitRoot, dir) + "/")} (slug: ${highlighter.info(slug)})`);
   p.note(
-    `Drop any ${highlighter.info(".mp3")} or ${highlighter.info(".wav")} file into:\n${highlighter.muted(path.relative(gitRoot, dir))}`,
+    `Add any ${highlighter.info(".mp3")} or ${highlighter.info(".wav")} file into:\n${highlighter.muted(path.relative(gitRoot, dir))}`,
     "Add your audio"
   );
   p.outro(highlighter.success(highlighter.bold("Done!")));

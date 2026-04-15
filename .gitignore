@@ -3,7 +3,3 @@ dist/
 .turbo/
 bun.lockb
 
-# Audio files are personal and never committed
-# Contributors drop their files locally into .tagthat/<slug>/
-*.mp3
-*.wav
