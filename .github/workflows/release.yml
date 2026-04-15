@@ -21,10 +21,9 @@ jobs:
           bun-version: latest
 
       - name: Install git-cliff
-        run: |
-          curl -sSfL https://github.com/orhun/git-cliff/releases/latest/download/git-cliff-x86_64-unknown-linux-gnu.tar.gz \
-            | tar -xz git-cliff
-          sudo install -m 755 git-cliff /usr/local/bin/git-cliff
+        uses: taiki-e/install-action@v2
+        with:
+          tool: git-cliff
 
       - name: Install dependencies
         run: bun install
