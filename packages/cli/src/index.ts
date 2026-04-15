@@ -4,13 +4,14 @@ import { Command } from "commander";
 import { initCommand } from "@/commands/init";
 import { addCommand } from "@/commands/add";
 import { testCommand } from "@/commands/test";
+import { version } from "../package.json";
 
 const program = new Command();
 
 program
   .name("tagthat")
   .description("Play your producer tag when you push to git")
-  .version("0.1.0", "-v, --version", "Output the current version");
+  .version(version, "-v, --version", "Output the current version");
 
 program
   .command("init", { isDefault: true })
