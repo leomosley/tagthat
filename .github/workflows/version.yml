@@ -1,0 +1,49 @@
+name: Version
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  release:
+    name: Calculate version and release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get next version
+        id: next
+        uses: orhun/git-cliff-action@v3
+        with:
+          config: cliff.toml
+          args: --bumped-version
+
+      - name: Check if a release is needed
+        id: check
+        run: |
+          LATEST=$(git tag --sort=-version:refname | head -n1 | sed 's/^v//')
+          NEXT="${{ steps.next.outputs.version }}"
+          if [ "$LATEST" != "$NEXT" ]; then
+            echo "needed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate changelog
+        if: steps.check.outputs.needed == 'true'
+        id: changelog
+        uses: orhun/git-cliff-action@v3
+        with:
+          config: cliff.toml
+          args: --unreleased --bump
+
+      - name: Create GitHub release
+        if: steps.check.outputs.needed == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.next.outputs.version }}
+          name: v${{ steps.next.outputs.version }}
+          body: ${{ steps.changelog.outputs.content }}
