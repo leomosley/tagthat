@@ -3,7 +3,7 @@ import path from "node:path";
 import { findGitRoot, getContributors } from "@/utils/git";
 import { slugify } from "@/utils/slug";
 import { writeAndInstallHook } from "@/utils/hook";
-import { contributorDir, audioPaths } from "@/utils/paths";
+import { contributorDir } from "@/utils/paths";
 import { ensureContributorSlot } from "@/utils/fs";
 import { abort } from "@/utils/ui";
 import { highlighter } from "@/utils/highlighter";
@@ -41,15 +41,14 @@ export async function initCommand(): Promise<void> {
     if (!slug) continue;
 
     const dir = contributorDir(gitRoot, slug);
-    const { mp3, wav } = audioPaths(dir, slug);
-    const { existed } = await ensureContributorSlot(dir, slug);
+    const { existed } = await ensureContributorSlot(dir);
 
     if (existed) {
       skipped.push(name);
     } else {
       created.push(
         `${highlighter.success("+")} ${highlighter.bold(name)}\n` +
-          `         ${highlighter.info(path.relative(gitRoot, mp3))} ${highlighter.muted("or")} ${highlighter.info(path.relative(gitRoot, wav))}`
+          `         ${highlighter.info(path.relative(gitRoot, dir))}`
       );
     }
   }
@@ -67,7 +66,7 @@ export async function initCommand(): Promise<void> {
   }
 
   p.log.info(
-    `Drop your audio file (${highlighter.info(".mp3")} or ${highlighter.info(".wav")}) into the path above.\n` +
+    `Drop any ${highlighter.info(".mp3")} or ${highlighter.info(".wav")} file into your contributor directory.\n` +
       `Then commit ${highlighter.muted(".tagthat/")} and push — tagthat plays automatically.`
   );
 

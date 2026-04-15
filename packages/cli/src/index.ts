@@ -3,6 +3,7 @@
 import { Command } from "commander";
 import { initCommand } from "@/commands/init";
 import { addCommand } from "@/commands/add";
+import { testCommand } from "@/commands/test";
 
 const program = new Command();
 
@@ -23,6 +24,13 @@ program
   .description("Add a contributor slot for the given name")
   .action(async (name: string) => {
     await addCommand(name);
+  });
+
+program
+  .command("test [name]")
+  .description("Simulate a push and play your tag (uses git config user.name if no name given)")
+  .action(async (name?: string) => {
+    await testCommand(name);
   });
 
 program.parseAsync(process.argv).catch((err: unknown) => {
