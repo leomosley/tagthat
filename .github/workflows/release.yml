@@ -36,7 +36,7 @@ jobs:
       - name: Get next version
         id: next
         run: |
-          VERSION=$(git cliff --bumped-version 2>/dev/null || echo "")
+          VERSION=$(git cliff --bumped-version 2>/dev/null | sed 's/^v//' || echo "")
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Check if a release is needed
