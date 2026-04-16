@@ -47,7 +47,6 @@
   </div>
 </div>
 
-
 <script>
   const root = document.getElementById("terminal-output")!;
   const replay = document.getElementById("terminal-replay")!;
@@ -187,12 +186,16 @@
 
   replayBtn.addEventListener("click", () => runDemo());
 
-  window.addEventListener("resize", () => {
-    const mobile = window.innerWidth < 640;
-    const fs = mobile ? 11 : 13;
-    const pad = mobile ? 16 : 24;
-    root.style.height = `${Math.ceil(LINES * fs * LINE_HEIGHT) + pad * 2 + 6}px`;
-  }, { passive: true });
+  window.addEventListener(
+    "resize",
+    () => {
+      const mobile = window.innerWidth < 640;
+      const fs = mobile ? 11 : 13;
+      const pad = mobile ? 16 : 24;
+      root.style.height = `${Math.ceil(LINES * fs * LINE_HEIGHT) + pad * 2 + 6}px`;
+    },
+    { passive: true },
+  );
 
   const observer = new IntersectionObserver(
     (entries) => {
