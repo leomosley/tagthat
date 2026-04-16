@@ -19,7 +19,7 @@ import TerminalDemo from "../components/terminal-demo.astro";
       >
         Add a <span class="reveal-group"
           ><span class="reveal-top"
-            >producer tag<span style="color:#f472b6">*</span></span
+            >producer tag<span class="reveal-trigger" style="color:#f472b6">*</span></span
           ><span class="reveal-bottom">sound effect</span></span
         > to your pushes.
       </h1>
@@ -44,3 +44,18 @@ import TerminalDemo from "../components/terminal-demo.astro";
     </section>
   </main>
 </Layout>
+
+<script>
+  const group = document.querySelector<HTMLElement>(".reveal-group");
+  const trigger = document.querySelector<HTMLElement>(".reveal-trigger");
+  const bottom = document.querySelector<HTMLElement>(".reveal-bottom");
+  if (group && trigger && bottom) {
+    trigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      group.classList.add("active");
+    });
+    bottom.addEventListener("click", () => {
+      group.classList.remove("active");
+    });
+  }
+</script>
