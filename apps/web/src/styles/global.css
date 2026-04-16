@@ -1,0 +1,156 @@
+@import "tailwindcss";
+
+/* ── Variables ─────────────────────────────────────── */
+:root {
+  --pink:    #f472b6;
+  --bg:      #0a0a0a;
+  --border:  rgba(255,255,255,0.07);
+  color-scheme: dark;
+}
+
+/* ── Base ───────────────────────────────────────────── */
+body {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(ellipse 90% 45% at 50% -5%, rgba(244,114,182,0.08) 0%, transparent 65%);
+  color: #e5e5e5;
+  font-family: system-ui, sans-serif;
+}
+
+/* Grain */
+.grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px;
+}
+
+/* ── Animations ─────────────────────────────────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.animate-fade-up {
+  opacity: 0;
+  animation: fade-up 0.6s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+.delay-1 { animation-delay: 80ms;  }
+.delay-2 { animation-delay: 180ms; }
+.delay-3 { animation-delay: 280ms; }
+.delay-4 { animation-delay: 420ms; }
+
+/* ── Title reveal ───────────────────────────────────── */
+.reveal-group {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.reveal-top {
+  display: block;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-bottom {
+  position: absolute;
+  inset: 0;
+  color: #f472b6;
+  transform: translateY(110%);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-group:hover .reveal-top    { transform: translateY(-110%); }
+.reveal-group:hover .reveal-bottom { transform: translateY(0); }
+
+/* ── Fonts ──────────────────────────────────────────── */
+@font-face {
+  font-family: 'SF Mono';
+  src: local('SFMono-Regular'), local('SF Mono Regular');
+  font-weight: 400;
+}
+@font-face {
+  font-family: 'SF Mono';
+  src: local('SFMono-Medium'), local('SF Mono Medium');
+  font-weight: 500 600;
+}
+
+/* ── Terminal ───────────────────────────────────────── */
+.terminal-window {
+  background: #111111;
+  border: 1px solid rgba(255,255,255,0.07);
+  position: relative;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
+}
+.terminal-titlebar {
+  background: #0d0d0d;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.terminal-body {
+  font-family: 'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.terminal-body * {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Aizen Dark palette */
+.t-fg    { color: #d0d6f0; }
+.t-green { color: #a4e08b; }
+.t-cyan  { color: #90dcd0; }
+.t-red   { color: #f18896; }
+.t-dim   { color: #3e3e3e; }
+.t-audio { color: #c8a2f4; font-weight: 600; }
+
+.cursor {
+  display: inline-block;
+  width: 7px;
+  height: 0.85em;
+  background: #f8b069;
+  vertical-align: text-bottom;
+  margin-left: 1px;
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+.terminal-replay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10,10,10,0.7);
+  backdrop-filter: blur(3px);
+  border-radius: inherit;
+}
+.terminal-replay.hidden { display: none; }
+
+.terminal-replay button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #a0a0a0;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.15s;
+}
+.terminal-replay button:hover {
+  background: rgba(244,114,182,0.1);
+  border-color: rgba(244,114,182,0.4);
+  color: #f472b6;
+  transform: rotate(-20deg);
+}

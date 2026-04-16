@@ -1,0 +1,182 @@
+---
+
+---
+
+<div
+  class="terminal-window w-full max-w-4xl rounded-xl overflow-hidden flex flex-col shadow-2xl shadow-black/60"
+>
+  <!-- Title bar -->
+  <div class="terminal-titlebar flex items-center gap-2 px-4 py-3">
+    <div class="h-3 w-3 rounded-full" style="background:#ff5f57"></div>
+    <div class="h-3 w-3 rounded-full" style="background:#febc2e"></div>
+    <div class="h-3 w-3 rounded-full" style="background:#28c840"></div>
+    <span
+      class="terminal-dim ml-3 text-xs"
+      style="font-family:'SF Mono',ui-monospace,monospace;color:#444444"
+      >tagthat</span
+    >
+  </div>
+
+  <!-- Body -->
+  <div
+    id="terminal-output"
+    class="terminal-body font-mono p-4 sm:p-6"
+    style="height:335px;overflow:hidden"
+    aria-live="polite"
+  >
+  </div>
+
+  <!-- Play again overlay -->
+  <div id="terminal-replay" class="terminal-replay hidden">
+    <button id="terminal-replay-btn" aria-label="Play again">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        width="18"
+        height="18"
+      >
+        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+        <path d="M3 3v5h5"></path>
+      </svg>
+    </button>
+  </div>
+</div>
+
+
+<script>
+  const root = document.getElementById("terminal-output")!;
+  const replay = document.getElementById("terminal-replay")!;
+  const replayBtn = document.getElementById("terminal-replay-btn")!;
+
+  const MONO = "'JetBrains Mono', 'SF Mono', ui-monospace, monospace";
+  const FONT_SIZE = "13px";
+  const LINE_HEIGHT = "1.7";
+
+  const TAGS = [
+    "boom.mp3",
+    "bruh.mp3",
+    "fah.mp3",
+    "fahhhhhhhhhhhhhh.mp3",
+    "get-out.mp3",
+    "horn.mp3",
+    "lobotomy.mp3",
+    "rizz.mp3",
+    "tag.mp3",
+  ];
+
+  function pickTag(): string {
+    return TAGS[Math.floor(Math.random() * TAGS.length)]!;
+  }
+
+  const C = (s: string) => `<span style="color:#90dcd0">${s}</span>`;
+  const D = (s: string) => `<span style="color:#3e3e3e">${s}</span>`;
+  const FG = (s: string) => `<span style="color:#d0d6f0">${s}</span>`;
+  const R = (s: string) => `<span style="color:#f18896">${s}</span>`;
+  const M = (s: string) => `<span style="color:#c8a2f4">${s}</span>`;
+  const PROMPT = `${C("tagthat")} ${M("git:(")}${R("main")}${M(")")} ${R("✗")}`;
+  const CURSOR = `<span class="cursor"></span>`;
+
+  function sleep(ms: number) {
+    return new Promise<void>((r) => setTimeout(r, ms));
+  }
+
+  function applyFont(el: HTMLElement) {
+    el.style.fontFamily = MONO;
+    el.style.fontSize = FONT_SIZE;
+    el.style.lineHeight = LINE_HEIGHT;
+  }
+
+  function addLine(html: string): HTMLDivElement {
+    const d = document.createElement("div");
+    applyFont(d);
+    d.style.color = "#d0d6f0";
+    d.innerHTML = html;
+    root.appendChild(d);
+    root.scrollTop = root.scrollHeight;
+    return d;
+  }
+
+  async function typeCommand(text: string, charDelay = 55): Promise<void> {
+    const line = addLine(`${PROMPT} ${CURSOR}`);
+    const typed = document.createElement("span");
+    applyFont(typed);
+    typed.style.color = "#d0d6f0";
+    line.querySelector(".cursor")!.before(typed);
+
+    for (const ch of text) {
+      typed.textContent += ch;
+      await sleep(charDelay + (Math.random() * 30 - 15));
+    }
+
+    line.innerHTML = `${PROMPT} ${FG(text)}`;
+    await sleep(160);
+  }
+
+  async function runDemo() {
+    replay.classList.add("hidden");
+    root.innerHTML = "";
+
+    await sleep(600);
+
+    const idle = addLine(`${PROMPT} ${CURSOR}`);
+    await sleep(900);
+    idle.remove();
+
+    await typeCommand("git add -A");
+    await sleep(300);
+
+    await typeCommand('git commit -m "feat: add reverb to the drop"');
+    await sleep(100);
+    addLine(FG("[main 3f2a1c8] feat: add reverb to the drop"));
+    addLine(FG(" 1 file changed, 12 insertions(+)"));
+    await sleep(300);
+
+    addLine("");
+    await sleep(200);
+
+    await typeCommand("git push");
+    const tag = pickTag();
+    const audio = new Audio(`/${tag}`);
+    audio.play().catch(() => {});
+    await sleep(200);
+
+    await sleep(120);
+    addLine(D("Enumerating objects: 5, done."));
+    await sleep(80);
+    addLine(D("Counting objects: 100% (5/5), done."));
+    await sleep(80);
+    addLine(D("Writing objects: 100% (3/3), 381 bytes | 381.00 KiB/s, done."));
+    await sleep(80);
+    addLine(D("To github.com:leomosley/my-project.git"));
+    await sleep(40);
+    addLine(D("   a1b2c3d..3f2a1c8  main -> main"));
+    await sleep(400);
+
+    addLine("");
+
+    addLine(`${PROMPT} ${CURSOR}`);
+
+    // Wait for audio to finish (or 5s max), then show replay
+    const duration = audio.duration || 0;
+    await sleep(Math.max(duration * 1000 || 3000, 1500));
+    replay.classList.remove("hidden");
+  }
+
+  replayBtn.addEventListener("click", () => runDemo());
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (entries[0]?.isIntersecting) {
+        observer.disconnect();
+        runDemo();
+      }
+    },
+    { threshold: 0.2 },
+  );
+  observer.observe(root);
+</script>
