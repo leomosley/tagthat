@@ -67,8 +67,13 @@ body {
   transform: translateY(110%);
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.reveal-group:hover .reveal-top    { transform: translateY(-110%); }
-.reveal-group:hover .reveal-bottom { transform: translateY(0); }
+.reveal-trigger { cursor: pointer; }
+.reveal-bottom  { cursor: pointer; }
+
+.reveal-group:hover .reveal-top,
+.reveal-group.active .reveal-top    { transform: translateY(-110%); }
+.reveal-group:hover .reveal-bottom,
+.reveal-group.active .reveal-bottom { transform: translateY(0); }
 
 /* ── Fonts ──────────────────────────────────────────── */
 @font-face {

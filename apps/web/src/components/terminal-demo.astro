@@ -127,6 +127,10 @@
     replay.classList.add("hidden");
     root.innerHTML = "";
 
+    const tag = pickTag();
+    const audio = new Audio(`/${tag}`);
+    audio.preload = "auto";
+
     await sleep(600);
 
     const idle = addLine(`${PROMPT} ${CURSOR}`);
@@ -157,8 +161,6 @@
     await sleep(200);
 
     await typeCommand("git push");
-    const tag = pickTag();
-    const audio = new Audio(`/${tag}`);
     audio.play().catch(() => {});
     await sleep(200);
 
