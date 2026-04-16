@@ -53,6 +53,8 @@ body {
   display: inline-block;
   overflow: hidden;
   vertical-align: bottom;
+  padding-bottom: 0.15em;
+  margin-bottom: -0.15em;
 }
 .reveal-top {
   display: block;
@@ -112,10 +114,12 @@ body {
 .cursor {
   display: inline-block;
   width: 7px;
-  height: 0.85em;
-  background: #f8b069;
-  vertical-align: text-bottom;
+  height: 1em;
+  background: #ffffff;
+  vertical-align: middle;
   margin-left: 1px;
+  position: relative;
+  top: 0.05em;
   animation: blink 1s step-end infinite;
 }
 @keyframes blink {

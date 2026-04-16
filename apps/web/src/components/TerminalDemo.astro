@@ -21,7 +21,7 @@
   <div
     id="terminal-output"
     class="terminal-body font-mono p-4 sm:p-6"
-    style="height:335px;overflow:hidden"
+    style="overflow-x:auto;overflow-y:hidden"
     aria-live="polite"
   >
   </div>
@@ -54,8 +54,15 @@
   const replayBtn = document.getElementById("terminal-replay-btn")!;
 
   const MONO = "'JetBrains Mono', 'SF Mono', ui-monospace, monospace";
-  const FONT_SIZE = "13px";
-  const LINE_HEIGHT = "1.7";
+  const LINE_HEIGHT = 1.7;
+  const LINES = 13;
+
+  // Responsive font size + terminal height
+  const isMobile = window.innerWidth < 640;
+  const fontSize = isMobile ? 11 : 13;
+  const paddingPx = isMobile ? 16 : 24; // matches p-4 / p-6
+  const FONT_SIZE = `${fontSize}px`;
+  root.style.height = `${Math.ceil(LINES * fontSize * LINE_HEIGHT) + paddingPx * 2 + 6}px`;
 
   const TAGS = [
     "boom.mp3",
@@ -79,7 +86,7 @@
   const R = (s: string) => `<span style="color:#f18896">${s}</span>`;
   const M = (s: string) => `<span style="color:#c8a2f4">${s}</span>`;
   const PROMPT = `${C("tagthat")} ${M("git:(")}${R("main")}${M(")")} ${R("✗")}`;
-  const CURSOR = `<span class="cursor"></span>`;
+  const CURSOR = `<span class="cursor" style="display:inline-block;width:7px;height:1em;background:#ffffff;vertical-align:middle;position:relative;top:0.05em;margin-left:1px;animation:blink 1s step-end infinite"></span>`;
 
   function sleep(ms: number) {
     return new Promise<void>((r) => setTimeout(r, ms));
@@ -88,7 +95,7 @@
   function applyFont(el: HTMLElement) {
     el.style.fontFamily = MONO;
     el.style.fontSize = FONT_SIZE;
-    el.style.lineHeight = LINE_HEIGHT;
+    el.style.lineHeight = String(LINE_HEIGHT);
   }
 
   function addLine(html: string): HTMLDivElement {
@@ -127,12 +134,23 @@
     await sleep(900);
     idle.remove();
 
+    const COMMITS = [
+      "crazy important feature",
+      "ai slop",
+      "idk claude wrote it",
+      "fix the thing",
+      "pls work",
+      "final final v2",
+      "no idea what i changed",
+    ];
+    const msg = COMMITS[Math.floor(Math.random() * COMMITS.length)]!;
+
     await typeCommand("git add -A");
     await sleep(300);
 
-    await typeCommand('git commit -m "feat: add reverb to the drop"');
+    await typeCommand(`git commit -m "${msg}"`);
     await sleep(100);
-    addLine(FG("[main 3f2a1c8] feat: add reverb to the drop"));
+    addLine(FG(`[main 3f2a1c8] ${msg}`));
     addLine(FG(" 1 file changed, 12 insertions(+)"));
     await sleep(300);
 
@@ -168,6 +186,13 @@
   }
 
   replayBtn.addEventListener("click", () => runDemo());
+
+  window.addEventListener("resize", () => {
+    const mobile = window.innerWidth < 640;
+    const fs = mobile ? 11 : 13;
+    const pad = mobile ? 16 : 24;
+    root.style.height = `${Math.ceil(LINES * fs * LINE_HEIGHT) + pad * 2 + 6}px`;
+  }, { passive: true });
 
   const observer = new IntersectionObserver(
     (entries) => {
