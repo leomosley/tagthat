@@ -2,4 +2,7 @@ node_modules/
 dist/
 .turbo/
 bun.lockb
+.env
+.env.local
+.env.*
 
